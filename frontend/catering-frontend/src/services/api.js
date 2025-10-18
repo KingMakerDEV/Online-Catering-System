@@ -53,9 +53,15 @@ export const register = (user) => api.post('/api/auth/register', user).then((res
 
 export const getCurrentUser = () => api.get('/api/auth/me').then((response) => response.data);
 
-export const getMenus = () => api.get('/api/menu').then((response) => response.data);
+// export const getMenus = () => api.get('/api/menu').then((response) => response.data);
 
-export const placeOrder = (orderItems) => api.post('/api/orders', orderItems).then((response) => response.data);
+export const getMenus = () => api.get('/api/menu').then((res) => res.data);
+
+export const placeOrder = (orderItems) =>
+  api.post('/api/orders', orderItems).then((res) => res.data);
+
+
+// export const placeOrder = (orderItems) => api.post('/api/orders', orderItems).then((response) => response.data);
 
 export const getOrders = () => api.get('/api/orders').then((response) => response.data);
 
