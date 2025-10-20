@@ -20,10 +20,11 @@ const Menu = () => {
           <div key={item.id} className="col-md-4 mb-3">
             <div className="card">
 <img
-  src={`/api/menu/${item.id}/image`}
+  src={item.imageUrl}   // ✅ use Cloudinary URL directly
   alt={item.name}
   style={{ width: '100%', height: '200px', objectFit: 'cover' }}
 />
+
               <div className="card-body">
                 <h5>{item.name}</h5>
                 <p>${item.price}</p>
