@@ -12,7 +12,10 @@ public class MenuItem {
     private String name;
     private double price;
     private String description;
-    @Lob  // ✅ FIXED: LONGBLOB for huge Base64 images
-    @Column(length = 16777215) // 16MB max
-    private String image;
+    @Lob
+    @com.fasterxml.jackson.annotation.JsonIgnore   // ✅ add this
+    private byte[] image;
+
+
+
 }

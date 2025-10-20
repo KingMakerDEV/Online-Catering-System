@@ -24,6 +24,7 @@ public class OrderService {
     }
 
     public List<CustomerOrder> getUserOrders(User user) {
-        return orderRepository.findByUser(user);
+        List<CustomerOrder> orders = orderRepository.findByUser(user);
+        return orders != null ? orders : List.of();
     }
 }

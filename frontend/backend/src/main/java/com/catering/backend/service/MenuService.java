@@ -9,8 +9,15 @@ import java.util.List;
 
 @Service
 public class MenuService {
+
     @Autowired
     private MenuItemRepository menuItemRepository;
+
+    // ✅ Implemented method
+    public MenuItem getMenuItemById(Long id) {
+        return menuItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Menu item not found with id " + id));
+    }
 
     public MenuItem createMenuItem(MenuItem menuItem) {
         return menuItemRepository.save(menuItem);

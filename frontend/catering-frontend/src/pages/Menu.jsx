@@ -19,7 +19,11 @@ const Menu = () => {
         {menus.map((item) => (
           <div key={item.id} className="col-md-4 mb-3">
             <div className="card">
-              <img src={`data:image/jpeg;base64,${item.image}`} alt={item.name} />
+<img
+  src={`/api/menu/${item.id}/image`}
+  alt={item.name}
+  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+/>
               <div className="card-body">
                 <h5>{item.name}</h5>
                 <p>${item.price}</p>

@@ -12,6 +12,7 @@ const Cart = () => {
         menuItem: { id: item.id },
         quantity: item.quantity,
       }));
+      console.log("🛒 Sending order payload:", orderItems);
       await placeOrder(orderItems);
       clearCart();
       alert('Order placed successfully!');
@@ -33,5 +34,7 @@ const Cart = () => {
     </div>
   );
 };
+
+
 
 export default Cart;

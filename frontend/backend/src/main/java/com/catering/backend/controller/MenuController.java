@@ -36,9 +36,10 @@ public class MenuController {
             menuItem.setPrice(price);
 
             if (image != null && !image.isEmpty()) {
-                String base64Image = Base64.getEncoder().encodeToString(image.getBytes());
-                menuItem.setImage(base64Image);
+                // ✅ store raw bytes directly
+                menuItem.setImage(image.getBytes());
             }
+
 
             MenuItem savedItem = menuItemService.createMenuItem(menuItem);
             System.out.println("✅ MenuItem CREATED: " + savedItem.getName());
@@ -54,4 +55,17 @@ public class MenuController {
     public ResponseEntity<List<MenuItem>> getAllMenuItems() {
         return ResponseEntity.ok(menuItemService.getAllMenuItems());
     }
+
+    // ✅ separate method, not nested inside the one above
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getMenuItemImage(@PathVariable Long id) {
+        MenuItem menuItem = menuItemService.getMenuItemById(id);
+        if (menuItem.getImage() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG) // or IMAGE_PNG depending on your uploads
+                .body(menuItem.getImage());
+    }
+
 }
