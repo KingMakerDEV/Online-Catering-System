@@ -2,35 +2,32 @@ package com.catering.backend.controller;
 
 import com.catering.backend.model.CustomerOrder;
 import com.catering.backend.model.OrderItem;
-import com.catering.backend.model.User;
 import com.catering.backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.catering.backend.service.UserService;
 
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
+
     @Autowired
     private OrderService orderService;
-    private UserService userService; // ✅ add this
 
+    // Place a new order
     @PostMapping
-    public CustomerOrder placeOrder(@AuthenticationPrincipal User user, @RequestBody List<OrderItem> items) {
+    public ResponseEntity<CustomerOrder> placeOrder(@RequestBody List<OrderItem> items) {
         System.out.println("📥 Received order items: " + items.size());
-
-        return orderService.placeOrder(user, items);
+        CustomerOrder order = orderService.placeOrder(items); // ✅ only pass items
+        return ResponseEntity.ok(order);
     }
 
+    // Get all orders for the authenticated user
     @GetMapping
-    public List<CustomerOrder> getOrders(@AuthenticationPrincipal User user) {
-        return orderService.getUserOrders(user);
+    public ResponseEntity<List<CustomerOrder>> getOrders() {
+        List<CustomerOrder> orders = orderService.getUserOrders();
+        return ResponseEntity.ok(orders);
     }
-
 }

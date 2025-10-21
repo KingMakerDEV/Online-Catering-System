@@ -57,6 +57,7 @@ public class SecurityConfig {
 
                         // ✅ Admin dashboard
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/orders/**").hasRole("USER")
 
                         .anyRequest().authenticated()
                 )
