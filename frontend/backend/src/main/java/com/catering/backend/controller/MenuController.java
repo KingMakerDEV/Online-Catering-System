@@ -2,30 +2,49 @@ package com.catering.backend.controller;
 
 import com.catering.backend.model.MenuItem;
 import com.catering.backend.service.MenuService;
+import com.catering.backend.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
 
-import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/menu")
 public class MenuController {
-    @Autowired
-    private MenuService menuItemService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)  // ✅ FIXED: Correct Content-Type
+    private final ImageService imageService;
+    private final MenuService menuItemService;
+
+    @Autowired
+    public MenuController(ImageService imageService, MenuService menuItemService) {
+        this.imageService = imageService;
+        this.menuItemService = menuItemService;
+    }
+
+    // Standalone image upload (optional)
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+            String url = imageService.uploadImage(file);
+            return ResponseEntity.ok(url);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Upload failed: " + e.getMessage());
+        }
+    }
+
+    // Create a new menu item with image upload
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createMenuItem(
             @RequestPart("name") String name,
             @RequestPart("description") String description,
-            @RequestPart("price") String priceStr,  // String first to avoid binding errors
+            @RequestPart("price") String priceStr,
             @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
             double price = Double.parseDouble(priceStr);
@@ -36,16 +55,14 @@ public class MenuController {
             menuItem.setPrice(price);
 
             if (image != null && !image.isEmpty()) {
-                String base64Image = Base64.getEncoder().encodeToString(image.getBytes());
-                menuItem.setImage(base64Image);
+                // Upload to Cloudinary and save URL
+                String imageUrl = imageService.uploadImage(image);
+                menuItem.setImageUrl(imageUrl);
             }
 
             MenuItem savedItem = menuItemService.createMenuItem(menuItem);
-            System.out.println("✅ MenuItem CREATED: " + savedItem.getName());
             return ResponseEntity.ok(savedItem);
         } catch (Exception e) {
-            System.err.println("❌ MenuItem ERROR: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
@@ -53,5 +70,14 @@ public class MenuController {
     @GetMapping
     public ResponseEntity<List<MenuItem>> getAllMenuItems() {
         return ResponseEntity.ok(menuItemService.getAllMenuItems());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MenuItem> getMenuItemById(@PathVariable Long id) {
+        MenuItem menuItem = menuItemService.getMenuItemById(id);
+        if (menuItem == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(menuItem);
     }
 }

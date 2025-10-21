@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // ✅ ADDED Navigate
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
@@ -29,9 +29,12 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/admin/login" element={<AdminLogin />} />
+<<<<<<< HEAD
               <Route path="/about" element={<AboutUs />} />
 
               {/* ✅ ADMIN DASHBOARD */}
+=======
+>>>>>>> e6c77546a8a2841b5a7cef786f5536e39451d81a
               <Route path="/admin/dashboard" element={
                 <ProtectedRoute requireRole="ROLE_ADMIN">
                   <div className="p-6">
@@ -41,15 +44,11 @@ function App() {
                   </div>
                 </ProtectedRoute>
               } />
-              
-              {/* ✅ ADD MENU ITEM */}
               <Route path="/admin/add-menu-item" element={
                 <ProtectedRoute requireRole="ROLE_ADMIN">
                   <AddMenuItem />
                 </ProtectedRoute>
               } />
-              
-              {/* ✅ CATCH-ALL */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>

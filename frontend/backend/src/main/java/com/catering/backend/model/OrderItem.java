@@ -1,4 +1,5 @@
 package com.catering.backend.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,6 +13,8 @@ public class OrderItem {
     @ManyToOne
     private MenuItem menuItem;
     @ManyToOne
+    @JsonIgnore
     private CustomerOrder order;
     private int quantity;
+
 }

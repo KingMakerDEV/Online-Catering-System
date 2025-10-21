@@ -17,7 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpMethod; // ✅ ADD THIS
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import java.util.List;
 public class SecurityConfig {
 
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private JwtAuthenticationFilter jwtAuthenticationFilter; // ✅ ADD THIS
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -46,12 +46,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/menu/").permitAll()
+                        // ✅ FIXED: ALL AUTH ROUTES FIRST (MOST SPECIFIC)
+                        .requestMatchers("/api/auth/**").permitAll() // ← LOGIN + REGISTER
+
+                        // ✅ FIXED: MENU - GET public, POST admin only
+                        .requestMatchers(HttpMethod.GET, "/api/menu/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/menu").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/menu/").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/menu/").hasRole("ADMIN")
-                        .requestMatchers("/api/admin/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/menu/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/menu/**").hasRole("ADMIN")
+
+                        // ✅ Admin dashboard
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/orders/**").hasRole("USER")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -62,15 +69,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173",  // ✅ your origin
-                "http://localhost:5174"   // ✅ your friend's origin
-        ));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
