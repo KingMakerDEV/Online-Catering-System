@@ -79,38 +79,54 @@ const Home = () => {
     <div className="home-page">
       {/* Hero Banner Section */}
       <section className="hero-slider">
-        <div className="slider-container">
-          <div 
-            className="slides-wrapper" 
-            style={{ 
-              transform: `translateX(-${currentHeroSlide * 100}%)`,
-              width: `${heroSlides.length * 100}%`
-            }}
-          >
-            {heroSlides.map((slide) => (
-              <div key={slide.id} className="slide">
-                <img 
-                  src={slide.image} 
-                  alt={`Banner ${slide.id}`} 
-                  className="slide-image-full"
-                />
-                
-              </div>
-            ))}
-          </div>
+  <div className="slider-container">
+    <div 
+      className="slides-wrapper fade-in-slide"
+      style={{
+        transform: `translateX(-${currentHeroSlide * 100}%)`,
+        width: `${heroSlides.length * 100}%`
+      }}
+    >
+      {heroSlides.map((slide) => (
+        <div key={slide.id} className="slide">
+          <img 
+            src={slide.image}
+            alt={`Banner ${slide.id}`}
+            className="slide-image-full"
+          />
+          {/* Overlay Content */}
+          
         </div>
-        
-        {/* Indicators */}
-        <div className="slide-indicators">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              className={`indicator ${index === currentHeroSlide ? 'active' : ''}`}
-              onClick={() => setCurrentHeroSlide(index)}
-            />
-          ))}
-        </div>
-      </section>
+      ))}
+    </div>
+
+    {/* Arrows */}
+    <button 
+      className="arrow-btn left" 
+      onClick={() => setCurrentHeroSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
+    >
+      &#10094;
+    </button>
+    <button 
+      className="arrow-btn right" 
+      onClick={() => setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length)}
+    >
+      &#10095;
+    </button>
+  </div>
+
+  {/* Indicators */}
+  <div className="slide-indicators">
+    {heroSlides.map((_, index) => (
+      <button
+        key={index}
+        className={`indicator ${index === currentHeroSlide ? 'active' : ''}`}
+        onClick={() => setCurrentHeroSlide(index)}
+      />
+    ))}
+  </div>
+</section>
+
 
       {/* Event Categories Section */}
       <section className="event-categories">

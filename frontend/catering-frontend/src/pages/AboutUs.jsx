@@ -412,7 +412,7 @@ const AboutUs = () => {
             >
               <video
                 src="/catering_1.mp4"
-                muted
+                
                 loop
                 playsInline
                 controls
