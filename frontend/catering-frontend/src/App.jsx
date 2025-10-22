@@ -29,12 +29,9 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/admin/login" element={<AdminLogin />} />
-<<<<<<< HEAD
               <Route path="/about" element={<AboutUs />} />
 
               {/* ✅ ADMIN DASHBOARD */}
-=======
->>>>>>> e6c77546a8a2841b5a7cef786f5536e39451d81a
               <Route path="/admin/dashboard" element={
                 <ProtectedRoute requireRole="ROLE_ADMIN">
                   <div className="p-6">
