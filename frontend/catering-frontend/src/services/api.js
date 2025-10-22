@@ -135,10 +135,12 @@ export const getCurrentUser = () =>
 export const getMenus = () =>
   api.get('/api/menu').then((res) => res.data);
 
-export const createMenuItem = (formData) =>
-  api.post('/api/menu', formData, {
+export const createMenuItem = async (data) => {
+  return api.post('/api/menu/with-events', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
-  }).then((res) => res.data);
+  });
+};
+
 
 // ------------------- ORDERS -------------------
 export const placeOrder = (orderItems) =>
@@ -146,3 +148,6 @@ export const placeOrder = (orderItems) =>
 
 export const getOrders = () =>
   api.get('/api/orders').then((res) => res.data);
+
+export const getMenusByEvent = (eventType) =>
+  api.get(`/api/menu/event/${eventType}`).then((res) => res.data);
