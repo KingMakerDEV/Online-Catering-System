@@ -77,11 +77,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-<<<<<<< HEAD
   baseURL: 'http://localhost:8080',  // ✅ FIXED: Removed extra /api
-=======
   baseURL: 'http://localhost:8080',
->>>>>>> e6c77546a8a2841b5a7cef786f5536e39451d81a
   withCredentials: true,
 });
 
