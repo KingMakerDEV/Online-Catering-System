@@ -959,7 +959,6 @@ const AboutUs = () => {
               { icon: "🍽️", title: "Quality Ingredients", desc: "Sourced from top local providers for fresh, flavorful results. Every dish is crafted with premium, seasonal ingredients." },
               { icon: "⚡", title: "Seamless Convenience", desc: "Book in minutes with real-time availability, easy customization, and 24/7 support. No more endless calls or emails." },
               { icon: "🌿", title: "Sustainable Practices", desc: "Eco-friendly packaging, carbon-neutral deliveries, and partnerships with green farms for a greener tomorrow." },
-              { icon: "⭐", title: "Personalized Service", desc: "Tailored menus based on your preferences, dietary needs, and event theme. Your vision, our expertise." },
             ].map((value, index) => (
               <motion.div
                 key={index}
