@@ -5,11 +5,11 @@ const Home = () => {
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
 
   const heroSlides = [
-    { id: 1, image: '/1_rotate.jpeg' },
-    { id: 2, image: '/2_rotate.jpeg' },
-    { id: 3, image: '/3_rotate.jpeg' },
-    { id: 4, image: '/4_rotate.jpeg' },
-    { id: 5, image: '/5_rotate.jpeg' },
+    { id: 1, image: '/1_rotate.png' },
+    { id: 2, image: '/2_rotate.png' },
+    { id: 3, image: '/3_rotate.png' },
+    { id: 4, image: '/4_rotate.png' },
+    { id: 5, image: '/5_rotate.png' },
   ];
 
   const eventCategories = [
@@ -31,52 +31,61 @@ const Home = () => {
 
   return (
     <div className="home-page">
-      {/* HERO SLIDER */}
-      <section className="hero-slider">
-        <div className="slider-container">
-          <div
-            className="slides-wrapper"
-            style={{ transform: `translateX(-${currentHeroSlide * 100}%)` }}
-          >
-            {heroSlides.map((slide) => (
-              <div key={slide.id} className="slide fade-in-slide">
-                <img
-                  src={slide.image}
-                  alt={`Banner ${slide.id}`}
-                  className="slide-image-full"
-                />
+      {/* HERO SLIDER - CLEAN MODERN DESIGN */}
+      <section className="hero-slider-modern">
+        <div className="modern-banner-container">
+          <div className="modern-banner-frame">
+            <div className="slider-container-modern">
+              <div
+                className="slides-wrapper-modern"
+                style={{ transform: `translateX(-${currentHeroSlide * 100}%)` }}
+              >
+                {heroSlides.map((slide) => (
+                  <div key={slide.id} className={`slide-modern ${slide.id === currentHeroSlide + 1 ? 'active' : ''}`}>
+                    <div className="image-wrapper-modern">
+                      <img
+                        src={slide.image}
+                        alt={`Banner ${slide.id}`}
+                        className="modern-slide-image"
+                        onError={(e) => {
+                          e.target.src = '/placeholder-food.jpg'; // Fallback image
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+
+              <button
+                className="modern-arrow-btn left"
+                onClick={() =>
+                  setCurrentHeroSlide((prev) =>
+                    (prev - 1 + heroSlides.length) % heroSlides.length
+                  )
+                }
+              >
+                &#8249;
+              </button>
+              <button
+                className="modern-arrow-btn right"
+                onClick={() =>
+                  setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length)
+                }
+              >
+                &#8250;
+              </button>
+            </div>
           </div>
 
-          <button
-            className="arrow-btn left"
-            onClick={() =>
-              setCurrentHeroSlide((prev) =>
-                (prev - 1 + heroSlides.length) % heroSlides.length
-              )
-            }
-          >
-            &#10094;
-          </button>
-          <button
-            className="arrow-btn right"
-            onClick={() =>
-              setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length)
-            }
-          >
-            &#10095;
-          </button>
-        </div>
-
-        <div className="slide-indicators">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              className={`indicator ${index === currentHeroSlide ? 'active' : ''}`}
-              onClick={() => setCurrentHeroSlide(index)}
-            />
-          ))}
+          <div className="modern-indicators">
+            {heroSlides.map((_, index) => (
+              <button
+                key={index}
+                className={`modern-indicator ${index === currentHeroSlide ? 'active' : ''}`}
+                onClick={() => setCurrentHeroSlide(index)}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -87,7 +96,14 @@ const Home = () => {
           <div className="events-grid">
             {eventCategories.map((event) => (
               <div key={event.id} className="event-card">
-                <img src={event.image} alt={event.title} className="event-img" />
+                <img 
+                  src={event.image} 
+                  alt={event.title} 
+                  className="event-img"
+                  onError={(e) => {
+                    e.target.src = '/placeholder-event.jpg'; // Fallback image
+                  }}
+                />
                 <h3>{event.title}</h3>
               </div>
             ))}
