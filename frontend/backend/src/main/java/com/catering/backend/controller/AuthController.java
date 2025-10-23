@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-
+@CrossOrigin(origins = "http://localhost:5174")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

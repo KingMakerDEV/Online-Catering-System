@@ -1,0 +1,53 @@
+.aboutus-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gradient-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, #8b5cf6, #ec4899, #f97316);
+  background-size: 400% 400%;
+  animation: gradientMove 12s ease infinite;
+}
+
+.aboutus-content {
+  position: relative;
+  z-index: 10;
+  max-width: 700px;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+}
+
+.aboutus-content h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.aboutus-content p {
+  font-size: 1.2rem;
+  line-height: 1.7;
+}
+
+.aboutus-content span {
+  font-weight: 600;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
