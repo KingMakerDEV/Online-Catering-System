@@ -2,13 +2,18 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInstagram, faFacebook, faTwitter, faLinkedin, faPinterest } from '@fortawesome/free-brands-svg-icons';
+import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 
 const AboutUs = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    feedback: ''
+    feedback: '',
+    rating: 0
   });
+
+  const [hoverRating, setHoverRating] = useState(0);
 
   const handleChange = (e) => {
     setFormData({
@@ -17,12 +22,27 @@ const AboutUs = () => {
     });
   };
 
+  const handleRatingClick = (rating) => {
+    setFormData({
+      ...formData,
+      rating: rating
+    });
+  };
+
+  const handleRatingHover = (rating) => {
+    setHoverRating(rating);
+  };
+
+  const handleRatingLeave = () => {
+    setHoverRating(0);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Feedback submitted:', formData);
     // Here you can integrate with a backend API for actual submission
-    alert('Thank you for your feedback! We\'ll get back to you soon.');
-    setFormData({ name: '', email: '', feedback: '' });
+    alert(`Thank you for your ${formData.rating > 0 ? formData.rating + '-star ' : ''}feedback! We'll get back to you soon.`);
+    setFormData({ name: '', email: '', feedback: '', rating: 0 });
   };
 
   const containerVariants = {
@@ -92,6 +112,17 @@ const AboutUs = () => {
     borderColor: "#e74c3c",
     boxShadow: "0 0 0 3px rgba(231, 76, 60, 0.1)",
     scale: 1.02,
+  };
+
+  const starHover = {
+    scale: 1.2,
+    rotate: [0, -10, 10, 0],
+    transition: { duration: 0.3 }
+  };
+
+  const starTap = {
+    scale: 0.9,
+    transition: { duration: 0.1 }
   };
 
   return (
@@ -944,7 +975,7 @@ const AboutUs = () => {
         </motion.div>
       </motion.section>
 
-      {/* Why Choose Us - Enhanced values with icons */}
+      {/* Combined Section: Why Choose Us (Left) and Feedback Form (Right) */}
       <motion.section
         variants={containerVariants}
         initial="hidden"
@@ -952,291 +983,389 @@ const AboutUs = () => {
         viewport={{ once: true, amount: 0.2 }}
         style={{
           padding: "6rem 1rem",
-          textAlign: "center",
           backgroundColor: "#ffffff",
         }}
       >
         <motion.div
           variants={itemVariants}
-          style={{ maxWidth: "1000px", margin: "0 auto" }}
+          style={{ 
+            maxWidth: "1200px", 
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "4rem",
+            alignItems: "start",
+          }}
         >
-          <motion.h2
-            variants={itemVariants}
-            style={{
-              fontSize: "2.8rem",
-              marginBottom: "1rem",
-              color: "#2c3e50",
-              fontWeight: "600",
-            }}
-          >
-            Why Choose BiteBook?
-          </motion.h2>
-          <motion.p
-            variants={itemVariants}
-            style={{
-              fontSize: "1.2rem",
-              lineHeight: "1.8",
-              marginBottom: "4rem",
-              color: "#666",
-              maxWidth: "600px",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          >
-            Discover what sets us apart in the world of catering. Our platform isn't just about food—it's about creating memorable experiences with every bite.
-          </motion.p>
+          {/* Left Side: Why Choose BiteBook? */}
           <motion.div
-            variants={containerVariants}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "2.5rem",
-              maxWidth: "1000px",
-              margin: "0 auto",
-            }}
+            variants={itemVariants}
           >
-            {[
-              { icon: "🍽️", title: "Quality Ingredients", desc: "Sourced from top local providers for fresh, flavorful results. Every dish is crafted with premium, seasonal ingredients." },
-              { icon: "⚡", title: "Seamless Convenience", desc: "Book in minutes with real-time availability, easy customization, and 24/7 support. No more endless calls or emails." },
-              { icon: "🌿", title: "Sustainable Practices", desc: "Eco-friendly packaging, carbon-neutral deliveries, and partnerships with green farms for a greener tomorrow." },
-            ].map((value, index) => (
+            <motion.h2
+              variants={itemVariants}
+              style={{
+                fontSize: "2.8rem",
+                marginBottom: "1rem",
+                color: "#2c3e50",
+                fontWeight: "600",
+              }}
+            >
+              Why Choose BiteBook?
+            </motion.h2>
+            <motion.p
+              variants={itemVariants}
+              style={{
+                fontSize: "1.2rem",
+                lineHeight: "1.8",
+                marginBottom: "3rem",
+                color: "#666",
+              }}
+            >
+              Discover what sets us apart in the world of catering. Our platform isn't just about food—it's about creating memorable experiences with every bite.
+            </motion.p>
+            <motion.div
+              variants={containerVariants}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr",
+                gap: "2rem",
+              }}
+            >
+              {[
+                { icon: "🍽️", title: "Quality Ingredients", desc: "Sourced from top local providers for fresh, flavorful results. Every dish is crafted with premium, seasonal ingredients." },
+                { icon: "⚡", title: "Seamless Convenience", desc: "Book in minutes with real-time availability, easy customization, and 24/7 support. No more endless calls or emails." },
+                { icon: "🌿", title: "Sustainable Practices", desc: "Eco-friendly packaging, carbon-neutral deliveries, and partnerships with green farms for a greener tomorrow." },
+              ].map((value, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  whileHover={cardHover}
+                  style={{
+                    backgroundColor: "#f8f9fa",
+                    padding: "2rem",
+                    borderRadius: "16px",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                    borderLeft: "4px solid #e74c3c",
+                    textAlign: "left",
+                    transition: "all 0.4s ease",
+                    cursor: "pointer",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  <motion.div
+                    style={{
+                      fontSize: "2.5rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    {value.icon}
+                  </motion.div>
+                  <motion.h3
+                    initial={{ color: "#e74c3c" }}
+                    whileHover={{ color: "#c0392b" }}
+                    style={{
+                      fontSize: "1.5rem",
+                      marginBottom: "1rem",
+                      color: "#e74c3c",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {value.title}
+                  </motion.h3>
+                  <motion.p
+                    style={{
+                      fontSize: "1rem",
+                      lineHeight: "1.7",
+                      color: "#666",
+                    }}
+                  >
+                    {value.desc}
+                  </motion.p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* Right Side: Share Your Feedback */}
+          <motion.div
+            variants={itemVariants}
+          >
+            <motion.h2
+              variants={itemVariants}
+              style={{
+                fontSize: "2.5rem",
+                marginBottom: "1rem",
+                color: "#2c3e50",
+                fontWeight: "600",
+              }}
+            >
+              Share Your Feedback
+            </motion.h2>
+            <motion.p
+              variants={itemVariants}
+              style={{
+                fontSize: "1.1rem",
+                lineHeight: "1.6",
+                marginBottom: "2rem",
+                color: "#666",
+              }}
+            >
+              Help us improve your online catering booking experience with BiteBook. Your thoughts matter!
+            </motion.p>
+            <motion.form
+              onSubmit={handleSubmit}
+              variants={containerVariants}
+              style={{
+                backgroundColor: "#ffffff",
+                padding: "2.5rem",
+                borderRadius: "20px",
+                boxShadow: "0 15px 35px rgba(0,0,0,0.1)",
+                border: "1px solid rgba(231, 76, 60, 0.1)",
+              }}
+              whileHover={cardHover}
+            >
               <motion.div
-                key={index}
-                variants={itemVariants}
-                whileHover={cardHover}
+                variants={formFieldVariants}
                 style={{
-                  backgroundColor: "#f8f9fa",
-                  padding: "2.5rem 2rem",
-                  borderRadius: "16px",
-                  boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-                  borderLeft: "4px solid #e74c3c",
+                  marginBottom: "1.5rem",
                   textAlign: "left",
-                  transition: "all 0.4s ease",
-                  cursor: "pointer",
-                  position: "relative",
-                  overflow: "hidden",
                 }}
               >
+                <label
+                  htmlFor="name"
+                  style={{
+                    display: "block",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    color: "#2c3e50",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Name
+                </label>
+                <motion.input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  whileFocus={formFocus}
+                  style={{
+                    width: "100%",
+                    padding: "1rem",
+                    border: "2px solid #ddd",
+                    borderRadius: "12px",
+                    fontSize: "1rem",
+                    transition: "all 0.3s ease",
+                    backgroundColor: "#f8f9fa",
+                  }}
+                />
+              </motion.div>
+              <motion.div
+                variants={formFieldVariants}
+                style={{
+                  marginBottom: "1.5rem",
+                  textAlign: "left",
+                }}
+              >
+                <label
+                  htmlFor="email"
+                  style={{
+                    display: "block",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    color: "#2c3e50",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Email
+                </label>
+                <motion.input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  whileFocus={formFocus}
+                  style={{
+                    width: "100%",
+                    padding: "1rem",
+                    border: "2px solid #ddd",
+                    borderRadius: "12px",
+                    fontSize: "1rem",
+                    transition: "all 0.3s ease",
+                    backgroundColor: "#f8f9fa",
+                  }}
+                />
+              </motion.div>
+
+              {/* Star Rating Section */}
+              <motion.div
+                variants={formFieldVariants}
+                style={{
+                  marginBottom: "2rem",
+                  textAlign: "center",
+                  padding: "1.5rem",
+                  background: "linear-gradient(135deg, #fff9f9 0%, #fff5f5 100%)",
+                  borderRadius: "16px",
+                  border: "2px dashed rgba(231, 76, 60, 0.2)",
+                }}
+              >
+                <motion.label
+                  style={{
+                    display: "block",
+                    fontSize: "1.1rem",
+                    fontWeight: "600",
+                    color: "#2c3e50",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  How would you rate your experience?
+                </motion.label>
+                
                 <motion.div
                   style={{
-                    fontSize: "3rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "0.5rem",
                     marginBottom: "1rem",
                   }}
+                  onMouseLeave={handleRatingLeave}
                 >
-                  {value.icon}
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <motion.div
+                      key={star}
+                      onClick={() => handleRatingClick(star)}
+                      onMouseEnter={() => handleRatingHover(star)}
+                      whileHover={starHover}
+                      whileTap={starTap}
+                      style={{
+                        cursor: "pointer",
+                        padding: "0.5rem",
+                        borderRadius: "50%",
+                        background: star <= (hoverRating || formData.rating) 
+                          ? "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)"
+                          : "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+                        boxShadow: star <= (hoverRating || formData.rating)
+                          ? "0 4px 15px rgba(255, 215, 0, 0.4)"
+                          : "0 2px 8px rgba(0,0,0,0.1)",
+                        transition: "all 0.3s ease",
+                      }}
+                    >
+                      <FontAwesomeIcon 
+                        icon={star <= (hoverRating || formData.rating) ? faStarSolid : faStarRegular}
+                        style={{ 
+                          fontSize: "2rem",
+                          color: star <= (hoverRating || formData.rating) ? "#FFFFFF" : "#DDD",
+                          filter: star <= (hoverRating || formData.rating) ? "drop-shadow(0 2px 4px rgba(0,0,0,0.2))" : "none",
+                        }} 
+                      />
+                    </motion.div>
+                  ))}
                 </motion.div>
-                <motion.h3
-                  initial={{ color: "#e74c3c" }}
-                  whileHover={{ color: "#c0392b" }}
-                  style={{
-                    fontSize: "1.6rem",
-                    marginBottom: "1rem",
-                    color: "#e74c3c",
-                    fontWeight: "600",
-                  }}
-                >
-                  {value.title}
-                </motion.h3>
-                <motion.p
-                  style={{
-                    fontSize: "1rem",
-                    lineHeight: "1.7",
-                    color: "#666",
-                  }}
-                >
-                  {value.desc}
-                </motion.p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-      </motion.section>
 
-      {/* Feedback Form Section */}
-      <motion.section
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        style={{
-          background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
-          padding: "6rem 1rem",
-          textAlign: "center",
-        }}
-      >
-        <motion.div
-          variants={itemVariants}
-          style={{ maxWidth: "600px", margin: "0 auto" }}
-        >
-          <motion.h2
-            variants={itemVariants}
-            style={{
-              fontSize: "2.5rem",
-              marginBottom: "1rem",
-              color: "#2c3e50",
-              fontWeight: "600",
-            }}
-          >
-            Share Your Feedback
-          </motion.h2>
-          <motion.p
-            variants={itemVariants}
-            style={{
-              fontSize: "1.1rem",
-              lineHeight: "1.6",
-              marginBottom: "3rem",
-              color: "#666",
-            }}
-          >
-            Help us improve your online catering booking experience with BiteBook. Your thoughts matter!
-          </motion.p>
-          <motion.form
-            onSubmit={handleSubmit}
-            variants={containerVariants}
-            style={{
-              backgroundColor: "#ffffff",
-              padding: "3rem",
-              borderRadius: "20px",
-              boxShadow: "0 15px 35px rgba(0,0,0,0.1)",
-              border: "1px solid rgba(231, 76, 60, 0.1)",
-            }}
-            whileHover={cardHover}
-          >
-            <motion.div
-              variants={formFieldVariants}
-              style={{
-                marginBottom: "1.5rem",
-                textAlign: "left",
-              }}
-            >
-              <label
-                htmlFor="name"
+                {/* Rating Labels */}
+                <motion.div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: "0.8rem",
+                    color: "#666",
+                    fontWeight: "500",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  <span>Poor</span>
+                  <span>Fair</span>
+                  <span>Good</span>
+                  <span>Very Good</span>
+                  <span>Excellent</span>
+                </motion.div>
+
+                {/* Selected Rating Display */}
+                {formData.rating > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{
+                      marginTop: "1rem",
+                      padding: "0.8rem",
+                      background: "linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)",
+                      color: "#ffffff",
+                      borderRadius: "50px",
+                      fontSize: "0.9rem",
+                      fontWeight: "600",
+                      display: "inline-block",
+                    }}
+                  >
+                    You rated: {formData.rating} star{formData.rating > 1 ? 's' : ''}
+                  </motion.div>
+                )}
+              </motion.div>
+
+              <motion.div
+                variants={formFieldVariants}
                 style={{
-                  display: "block",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  color: "#2c3e50",
-                  marginBottom: "0.5rem",
+                  marginBottom: "2rem",
+                  textAlign: "left",
                 }}
               >
-                Name
-              </label>
-              <motion.input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                whileFocus={formFocus}
+                <label
+                  htmlFor="feedback"
+                  style={{
+                    display: "block",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    color: "#2c3e50",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Your Feedback
+                </label>
+                <motion.textarea
+                  id="feedback"
+                  name="feedback"
+                  value={formData.feedback}
+                  onChange={handleChange}
+                  required
+                  rows="4"
+                  whileFocus={formFocus}
+                  style={{
+                    width: "100%",
+                    padding: "1rem",
+                    border: "2px solid #ddd",
+                    borderRadius: "12px",
+                    fontSize: "1rem",
+                    resize: "vertical",
+                    transition: "all 0.3s ease",
+                    backgroundColor: "#f8f9fa",
+                  }}
+                  placeholder="Tell us about your experience with our online catering booking system..."
+                />
+              </motion.div>
+              <motion.button
+                type="submit"
+                whileHover={buttonHover}
+                whileTap={{ scale: 0.98 }}
                 style={{
-                  width: "100%",
-                  padding: "1rem",
-                  border: "2px solid #ddd",
-                  borderRadius: "12px",
-                  fontSize: "1rem",
-                  transition: "all 0.3s ease",
-                  backgroundColor: "#f8f9fa",
-                }}
-              />
-            </motion.div>
-            <motion.div
-              variants={formFieldVariants}
-              style={{
-                marginBottom: "1.5rem",
-                textAlign: "left",
-              }}
-            >
-              <label
-                htmlFor="email"
-                style={{
-                  display: "block",
-                  fontSize: "1rem",
+                  backgroundColor: "#e74c3c",
+                  color: "#ffffff",
+                  padding: "1rem 2.5rem",
+                  border: "none",
+                  borderRadius: "50px",
+                  fontSize: "1.1rem",
                   fontWeight: "600",
-                  color: "#2c3e50",
-                  marginBottom: "0.5rem",
+                  cursor: "pointer",
+                  width: "100%",
                 }}
               >
-                Email
-              </label>
-              <motion.input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                whileFocus={formFocus}
-                style={{
-                  width: "100%",
-                  padding: "1rem",
-                  border: "2px solid #ddd",
-                  borderRadius: "12px",
-                  fontSize: "1rem",
-                  transition: "all 0.3s ease",
-                  backgroundColor: "#f8f9fa",
-                }}
-              />
-            </motion.div>
-            <motion.div
-              variants={formFieldVariants}
-              style={{
-                marginBottom: "2rem",
-                textAlign: "left",
-              }}
-            >
-              <label
-                htmlFor="feedback"
-                style={{
-                  display: "block",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  color: "#2c3e50",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Your Feedback
-              </label>
-              <motion.textarea
-                id="feedback"
-                name="feedback"
-                value={formData.feedback}
-                onChange={handleChange}
-                required
-                rows="5"
-                whileFocus={formFocus}
-                style={{
-                  width: "100%",
-                  padding: "1rem",
-                  border: "2px solid #ddd",
-                  borderRadius: "12px",
-                  fontSize: "1rem",
-                  resize: "vertical",
-                  transition: "all 0.3s ease",
-                  backgroundColor: "#f8f9fa",
-                }}
-                placeholder="Tell us about your experience with our online catering booking system..."
-              />
-            </motion.div>
-            <motion.button
-              type="submit"
-              whileHover={buttonHover}
-              whileTap={{ scale: 0.98 }}
-              style={{
-                backgroundColor: "#e74c3c",
-                color: "#ffffff",
-                padding: "1rem 2.5rem",
-                border: "none",
-                borderRadius: "50px",
-                fontSize: "1.1rem",
-                fontWeight: "600",
-                cursor: "pointer",
-                width: "100%",
-              }}
-            >
-              Submit Feedback
-            </motion.button>
-          </motion.form>
+                Submit Feedback
+              </motion.button>
+            </motion.form>
+          </motion.div>
         </motion.div>
       </motion.section>
 
