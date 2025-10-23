@@ -1,9 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInstagram, faFacebook, faTwitter, faLinkedin, faPinterest } from '@fortawesome/free-brands-svg-icons';
 
 const AboutUs = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    feedback: ''
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Feedback submitted:', formData);
+    // Here you can integrate with a backend API for actual submission
+    alert('Thank you for your feedback! We\'ll get back to you soon.');
+    setFormData({ name: '', email: '', feedback: '' });
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -52,6 +73,25 @@ const AboutUs = () => {
         damping: 10,
       },
     },
+  };
+
+  const formFieldVariants = {
+    hidden: { x: -20, opacity: 0 },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+      },
+    },
+  };
+
+  const formFocus = {
+    borderColor: "#e74c3c",
+    boxShadow: "0 0 0 3px rgba(231, 76, 60, 0.1)",
+    scale: 1.02,
   };
 
   return (
@@ -106,6 +146,7 @@ const AboutUs = () => {
             zIndex: 1,
           }}
         />
+        
         
         {/* Content Wrapper */}
         <motion.section
@@ -412,7 +453,6 @@ const AboutUs = () => {
             >
               <video
                 src="/catering_1.mp4"
-                
                 loop
                 playsInline
                 controls
@@ -1009,6 +1049,194 @@ const AboutUs = () => {
               </motion.div>
             ))}
           </motion.div>
+        </motion.div>
+      </motion.section>
+
+      {/* Feedback Form Section */}
+      <motion.section
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        style={{
+          background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+          padding: "6rem 1rem",
+          textAlign: "center",
+        }}
+      >
+        <motion.div
+          variants={itemVariants}
+          style={{ maxWidth: "600px", margin: "0 auto" }}
+        >
+          <motion.h2
+            variants={itemVariants}
+            style={{
+              fontSize: "2.5rem",
+              marginBottom: "1rem",
+              color: "#2c3e50",
+              fontWeight: "600",
+            }}
+          >
+            Share Your Feedback
+          </motion.h2>
+          <motion.p
+            variants={itemVariants}
+            style={{
+              fontSize: "1.1rem",
+              lineHeight: "1.6",
+              marginBottom: "3rem",
+              color: "#666",
+            }}
+          >
+            Help us improve your online catering booking experience with BiteBook. Your thoughts matter!
+          </motion.p>
+          <motion.form
+            onSubmit={handleSubmit}
+            variants={containerVariants}
+            style={{
+              backgroundColor: "#ffffff",
+              padding: "3rem",
+              borderRadius: "20px",
+              boxShadow: "0 15px 35px rgba(0,0,0,0.1)",
+              border: "1px solid rgba(231, 76, 60, 0.1)",
+            }}
+            whileHover={cardHover}
+          >
+            <motion.div
+              variants={formFieldVariants}
+              style={{
+                marginBottom: "1.5rem",
+                textAlign: "left",
+              }}
+            >
+              <label
+                htmlFor="name"
+                style={{
+                  display: "block",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  color: "#2c3e50",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Name
+              </label>
+              <motion.input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                whileFocus={formFocus}
+                style={{
+                  width: "100%",
+                  padding: "1rem",
+                  border: "2px solid #ddd",
+                  borderRadius: "12px",
+                  fontSize: "1rem",
+                  transition: "all 0.3s ease",
+                  backgroundColor: "#f8f9fa",
+                }}
+              />
+            </motion.div>
+            <motion.div
+              variants={formFieldVariants}
+              style={{
+                marginBottom: "1.5rem",
+                textAlign: "left",
+              }}
+            >
+              <label
+                htmlFor="email"
+                style={{
+                  display: "block",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  color: "#2c3e50",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Email
+              </label>
+              <motion.input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                whileFocus={formFocus}
+                style={{
+                  width: "100%",
+                  padding: "1rem",
+                  border: "2px solid #ddd",
+                  borderRadius: "12px",
+                  fontSize: "1rem",
+                  transition: "all 0.3s ease",
+                  backgroundColor: "#f8f9fa",
+                }}
+              />
+            </motion.div>
+            <motion.div
+              variants={formFieldVariants}
+              style={{
+                marginBottom: "2rem",
+                textAlign: "left",
+              }}
+            >
+              <label
+                htmlFor="feedback"
+                style={{
+                  display: "block",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  color: "#2c3e50",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Your Feedback
+              </label>
+              <motion.textarea
+                id="feedback"
+                name="feedback"
+                value={formData.feedback}
+                onChange={handleChange}
+                required
+                rows="5"
+                whileFocus={formFocus}
+                style={{
+                  width: "100%",
+                  padding: "1rem",
+                  border: "2px solid #ddd",
+                  borderRadius: "12px",
+                  fontSize: "1rem",
+                  resize: "vertical",
+                  transition: "all 0.3s ease",
+                  backgroundColor: "#f8f9fa",
+                }}
+                placeholder="Tell us about your experience with our online catering booking system..."
+              />
+            </motion.div>
+            <motion.button
+              type="submit"
+              whileHover={buttonHover}
+              whileTap={{ scale: 0.98 }}
+              style={{
+                backgroundColor: "#e74c3c",
+                color: "#ffffff",
+                padding: "1rem 2.5rem",
+                border: "none",
+                borderRadius: "50px",
+                fontSize: "1.1rem",
+                fontWeight: "600",
+                cursor: "pointer",
+                width: "100%",
+              }}
+            >
+              Submit Feedback
+            </motion.button>
+          </motion.form>
         </motion.div>
       </motion.section>
 
