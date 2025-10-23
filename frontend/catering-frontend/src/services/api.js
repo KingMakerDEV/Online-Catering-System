@@ -151,3 +151,9 @@ export const getOrders = () =>
 
 export const getMenusByEvent = (eventType) =>
   api.get(`/api/menu/event/${eventType}`).then((res) => res.data);
+
+
+
+export const confirmOrder = async (orderId, userDetails) => {
+  return api.post(`/api/orders/${orderId}/confirm`, userDetails);
+};
