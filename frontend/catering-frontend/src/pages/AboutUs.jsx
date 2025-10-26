@@ -22,6 +22,28 @@ const AboutUs = () => {
     });
   };
 
+   // ✅ Paste handleSubmit here
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8080/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData), // { name, email, feedback }
+      });
+
+      if (response.ok) {
+        alert("✅ Feedback sent successfully!");
+        setFormData({ name: "", email: "", feedback: "", rating: 0 });
+      } else {
+        alert("❌ Failed to send feedback.");
+      }
+    } catch (error) {
+      console.error("Error sending feedback:", error);
+      alert("⚠️ Something went wrong.");
+    }
+  };
+
   const handleRatingClick = (rating) => {
     setFormData({
       ...formData,
@@ -37,13 +59,13 @@ const AboutUs = () => {
     setHoverRating(0);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Feedback submitted:', formData);
-    // Here you can integrate with a backend API for actual submission
-    alert(`Thank you for your ${formData.rating > 0 ? formData.rating + '-star ' : ''}feedback! We'll get back to you soon.`);
-    setFormData({ name: '', email: '', feedback: '', rating: 0 });
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log('Feedback submitted:', formData);
+  //   // Here you can integrate with a backend API for actual submission
+  //   alert(`Thank you for your ${formData.rating > 0 ? formData.rating + '-star ' : ''}feedback! We'll get back to you soon.`);
+  //   setFormData({ name: '', email: '', feedback: '', rating: 0 });
+  // };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -753,7 +775,7 @@ const AboutUs = () => {
                   { 
                     icon: faInstagram, 
                     name: "Instagram", 
-                    url: "https://instagram.com/bitebook",
+                    url: "https://www.instagram.com/bitebook_caterers?igsh=ajVvZmJpOGUyZnd4",
                     color: "#E4405F"
                   },
                   { 

@@ -41,6 +41,8 @@
 //    }
 //}
 
+
+
 package com.catering.backend.controller;
 
 import com.catering.backend.DTO.OrderConfirmationRequest;
@@ -68,8 +70,8 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
+    // ✅ Confirm order now also accepts date from OrderConfirmationRequest
     @PostMapping("/{id}/confirm")
-
     public ResponseEntity<?> confirmOrder(
             @PathVariable Long id,
             @RequestBody OrderConfirmationRequest request
@@ -93,4 +95,3 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 }
-

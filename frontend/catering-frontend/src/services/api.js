@@ -155,6 +155,10 @@ export const getMenusByEvent = (eventType) =>
 
 
 
+// export const confirmOrder = async (orderId, userDetails) => {
+//   return api.post(`/api/orders/${orderId}/confirm`, userDetails);
+// };
+
 export const confirmOrder = async (orderId, userDetails) => {
-  return api.post(`/api/orders/${orderId}/confirm`, userDetails);
+  return api.post(`/api/orders/${orderId}/confirm`, userDetails).then((res) => res.data);
 };

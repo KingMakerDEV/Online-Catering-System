@@ -1,16 +1,20 @@
+//
 //package com.catering.backend.service;
 //
 //import com.catering.backend.DTO.OrderConfirmationRequest;
 //import com.catering.backend.model.CustomerOrder;
 //import com.catering.backend.model.OrderItem;
 //import com.catering.backend.model.User;
+//import com.catering.backend.model.OrderConfirmation; // ✅ added
 //import com.catering.backend.repository.CustomerOrderRepository;
 //import com.catering.backend.repository.UserRepository;
-//import com.catering.backend.repository.MenuItemRepository; // ✅ import added
+//import com.catering.backend.repository.MenuItemRepository; // ✅ already present
+//import com.catering.backend.repository.OrderConfirmationRepository; // ✅ added
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.core.Authentication;
 //import org.springframework.security.core.context.SecurityContextHolder;
 //import org.springframework.stereotype.Service;
+//import org.springframework.transaction.annotation.Transactional; // ✅ added
 //
 //import java.util.List;
 //
@@ -24,13 +28,41 @@
 //    private UserRepository userRepository;
 //
 //    @Autowired
-//    private MenuItemRepository menuItemRepository; // ✅ injected
+//    private MenuItemRepository menuItemRepository;
 //
-//    public boolean confirmOrder(Long orderId, OrderConfirmationRequest request)
+//    @Autowired
+//    private EmailService emailService;
 //
+//    @Autowired
+//    private OrderConfirmationRepository orderConfirmationRepository; // ✅ injected
+//
+//    @Transactional
+//    public boolean confirmOrder(Long orderId, OrderConfirmationRequest request) {
+//        CustomerOrder order = orderRepository.findById(orderId)
+//                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+//
+//        // Update order status
+//        order.setStatus("CONFIRMED");
+//        orderRepository.save(order);
+//
+//        // ✅ Build and persist OrderConfirmation entity
+//        OrderConfirmation confirmation = new OrderConfirmation();
+//        confirmation.setOrder(order);
+//        confirmation.setCustomerName(request.getName());
+//        confirmation.setEmail(request.getEmail());
+//        confirmation.setAddress(request.getAddress());
+//        confirmation.setPhone(request.getPhone());
+//        confirmation.setDate(request.getDate());
+//
+//        orderConfirmationRepository.save(confirmation);
+//
+//        // ✅ Send confirmation email
+//        emailService.sendOrderConfirmationEmail(order, request);
+//
+//        return true;
+//    }
 //
 //    public CustomerOrder placeOrder(List<OrderItem> items) {
-//        // ✅ Extract authenticated user (email is the principal)
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        User user = userRepository.findByEmail(auth.getName())
 //                .orElseThrow(() -> new RuntimeException("User not found: " + auth.getName()));
@@ -47,7 +79,6 @@
 //        });
 //        order.setItems(items);
 //
-//        // ✅ Now calculate total with real prices
 //        double total = items.stream()
 //                .mapToDouble(item -> item.getMenuItem().getPrice() * item.getQuantity())
 //                .sum();
@@ -65,19 +96,23 @@
 //}
 
 
+
 package com.catering.backend.service;
 
 import com.catering.backend.DTO.OrderConfirmationRequest;
 import com.catering.backend.model.CustomerOrder;
 import com.catering.backend.model.OrderItem;
 import com.catering.backend.model.User;
+import com.catering.backend.model.OrderConfirmation; // ✅ added
 import com.catering.backend.repository.CustomerOrderRepository;
 import com.catering.backend.repository.UserRepository;
-import com.catering.backend.repository.MenuItemRepository; // ✅ import added
+import com.catering.backend.repository.MenuItemRepository; // ✅ already present
+import com.catering.backend.repository.OrderConfirmationRepository; // ✅ added
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // ✅ added
 
 import java.util.List;
 
@@ -91,31 +126,41 @@ public class OrderService {
     private UserRepository userRepository;
 
     @Autowired
-    private MenuItemRepository menuItemRepository; // ✅ injected
+    private MenuItemRepository menuItemRepository;
 
     @Autowired
-    private EmailService emailService; // ✅ added
+    private EmailService emailService;
 
+    @Autowired
+    private OrderConfirmationRepository orderConfirmationRepository; // ✅ injected
+
+    @Transactional
     public boolean confirmOrder(Long orderId, OrderConfirmationRequest request) {
         CustomerOrder order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
 
         // Update order status
         order.setStatus("CONFIRMED");
-
-        // Optionally store user details from request (if your CustomerOrder has fields for them)
-        System.out.println("Confirming order for: " + request.getName() + ", " + request.getEmail());
-
         orderRepository.save(order);
 
-        // ✅ Call EmailService to send confirmation email with receipt
+        // ✅ Build and persist OrderConfirmation entity
+        OrderConfirmation confirmation = new OrderConfirmation();
+        confirmation.setOrder(order);
+        confirmation.setCustomerName(request.getName());
+        confirmation.setEmail(request.getEmail());
+        confirmation.setAddress(request.getAddress());
+        confirmation.setPhone(request.getPhone());
+        confirmation.setDate(request.getDate());
+
+        orderConfirmationRepository.save(confirmation);
+
+        // ✅ Send confirmation email (now includes date)
         emailService.sendOrderConfirmationEmail(order, request);
 
         return true;
     }
 
     public CustomerOrder placeOrder(List<OrderItem> items) {
-        // ✅ Extract authenticated user (email is the principal)
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByEmail(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found: " + auth.getName()));
@@ -132,7 +177,6 @@ public class OrderService {
         });
         order.setItems(items);
 
-        // ✅ Now calculate total with real prices
         double total = items.stream()
                 .mapToDouble(item -> item.getMenuItem().getPrice() * item.getQuantity())
                 .sum();

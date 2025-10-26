@@ -9,7 +9,8 @@ const ConfirmOrder = () => {
     name: '',
     email: '',
     address: '',
-    phone: ''
+    phone: '',
+    date: ''   // ✅ added date field
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ const ConfirmOrder = () => {
     setLoading(true);
 
     try {
-      await confirmOrder(orderId, formData);
+      await confirmOrder(orderId, formData); // ✅ date will be included automatically
       alert('✅ Order confirmed! You will receive an email shortly.');
       navigate('/orders');
     } catch (err) {
@@ -79,6 +80,18 @@ const ConfirmOrder = () => {
             className="form-control"
             name="phone"
             value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        {/* ✅ New Date input */}
+        <div className="mb-3">
+          <label className="form-label">Date</label>
+          <input
+            type="date"
+            className="form-control"
+            name="date"
+            value={formData.date}
             onChange={handleChange}
             required
           />

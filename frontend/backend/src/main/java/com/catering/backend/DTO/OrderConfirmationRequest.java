@@ -1,10 +1,13 @@
 package com.catering.backend.DTO;
 
+import java.time.LocalDate;
+
 public class OrderConfirmationRequest {
     private String name;
     private String email;
     private String address;
     private String phone;
+    private LocalDate date;  // ✅ added date field
 
     public OrderConfirmationRequest() {}
 
@@ -38,5 +41,14 @@ public class OrderConfirmationRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    // ✅ Getter and Setter for date
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

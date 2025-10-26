@@ -1,9 +1,97 @@
+//package com.catering.backend.config;
+//
+//import com.catering.backend.filter.JwtAuthenticationFilter;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+//import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+//import org.springframework.security.config.http.SessionCreationPolicy;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.web.SecurityFilterChain;
+//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+//import org.springframework.web.cors.CorsConfiguration;
+//import org.springframework.web.cors.CorsConfigurationSource;
+//import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+//
+//import org.springframework.http.HttpMethod; // ✅ ADD THIS
+//
+//import java.util.List;
+//
+//@Configuration
+//@EnableWebSecurity
+//@EnableMethodSecurity(prePostEnabled = true)
+//public class SecurityConfig {
+//
+//    @Autowired
+//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+//    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+//        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+//    }
+//// ✅ ADD THIS
+//
+//    @Bean
+//    public BCryptPasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+//        return authenticationConfiguration.getAuthenticationManager();
+//    }
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                .csrf(csrf -> csrf.disable())
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests(auth -> auth
+//                        // ✅ FIXED: ALL AUTH ROUTES FIRST (MOST SPECIFIC)
+//                        .requestMatchers("/api/auth/**").permitAll() // ← LOGIN + REGISTER
+//                        .requestMatchers("/api/feedback/**").permitAll()   // ✅ allow feedback
+//
+//                        // ✅ FIXED: MENU - GET public, POST admin only
+//                        .requestMatchers(HttpMethod.GET, "/api/menu/**").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/menu").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.PUT, "/api/menu/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/menu/**").hasRole("ADMIN")
+//
+//                        // ✅ Admin dashboard
+//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/orders/**").hasRole("USER")
+//
+//                        .anyRequest().authenticated()
+//                )
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
+//
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+//        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        configuration.setAllowedHeaders(List.of("*"));
+//        configuration.setAllowCredentials(true);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
+//}
+
+
+
 package com.catering.backend.config;
 
 import com.catering.backend.filter.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,8 +104,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import org.springframework.http.HttpMethod; // ✅ ADD THIS
+import org.springframework.http.HttpMethod;
 
 import java.util.List;
 
@@ -26,12 +113,11 @@ import java.util.List;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
-// ✅ ADD THIS
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -44,22 +130,35 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(1) // ensure this runs before the main chain
+    public SecurityFilterChain feedbackChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/api/feedback/**")
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ FIXED: ALL AUTH ROUTES FIRST (MOST SPECIFIC)
-                        .requestMatchers("/api/auth/**").permitAll() // ← LOGIN + REGISTER
+                        // Auth routes
+                        .requestMatchers("/api/auth/**").permitAll()
+                        // Feedback open to all
+                        .requestMatchers("/api/feedback/**").permitAll()
 
-                        // ✅ FIXED: MENU - GET public, POST admin only
+                        // Menu
                         .requestMatchers(HttpMethod.GET, "/api/menu/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/menu").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/menu/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/menu/**").hasRole("ADMIN")
 
-                        // ✅ Admin dashboard
+                        // Admin + Orders
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/orders/**").hasRole("USER")
 
@@ -82,82 +181,3 @@ public class SecurityConfig {
         return source;
     }
 }
-//
-//
-//package com.catering.backend.config;
-//
-//import com.catering.backend.filter.JwtAuthenticationFilter;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.http.HttpMethod;
-//import org.springframework.security.authentication.AuthenticationManager;
-//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-//import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.http.SessionCreationPolicy;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-//import org.springframework.web.cors.CorsConfiguration;
-//import org.springframework.web.cors.CorsConfigurationSource;
-//import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-//
-//import java.util.List;
-//
-//@Configuration
-//@EnableWebSecurity
-//@EnableMethodSecurity(prePostEnabled = true)
-//public class SecurityConfig {
-//
-//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-//
-//    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-//        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-//    }
-//
-//    @Bean
-//    public BCryptPasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .csrf(csrf -> csrf.disable())
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/auth/**").permitAll
-//                                ()
-//                        .requestMatchers(HttpMethod.GET, "/api/menu/**").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/menu/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.PUT, "/api/menu/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/api/menu/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/orders/**").hasRole("USER")
-//                        .anyRequest().authenticated()
-//                )
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-//    }
-//
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-//        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//        configuration.setAllowedHeaders(List.of("*"));
-//        configuration.setAllowCredentials(true);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
-//}
-//

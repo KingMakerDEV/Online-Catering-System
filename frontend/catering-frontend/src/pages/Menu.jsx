@@ -1,22 +1,24 @@
 import { useState, useEffect, useContext } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getMenus, getMenusByEvent } from '../services/api';
 import { CartContext } from '../context/CartContext';
+import MenuItem from '../components/MenuItem';
 
 const Menu = () => {
   const [menus, setMenus] = useState([]);
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, cartItems } = useContext(CartContext);
   const [searchParams, setSearchParams] = useSearchParams();
   const event = searchParams.get('event');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (event) {
-      setMenus([]); // ✅ clear old menus before fetching
+      setMenus([]);
       getMenusByEvent(event)
         .then(setMenus)
         .catch((error) => console.error('Error fetching filtered menus:', error));
     } else {
-      setMenus([]); // ✅ clear old menus before fetching
+      setMenus([]);
       getMenus()
         .then(setMenus)
         .catch((error) => console.error('Error fetching menus:', error));
@@ -46,23 +48,34 @@ const Menu = () => {
         <option value="WEDDING">Wedding</option>
       </select>
 
+      {/* Menu grid */}
       <div className="row">
         {menus.map((item) => (
           <div key={item.id} className="col-md-4 mb-3">
-            <div className="card">
-              <img
-                src={item.imageUrl} // ✅ use Cloudinary URL directly
-                alt={item.name}
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-              />
-              <div className="card-body">
-                <h5>{item.name}</h5>
-                <p>₹{item.price}</p>
-                <button onClick={() => addToCart(item)}>Add to Cart</button>
-              </div>
-            </div>
+            <MenuItem item={item} addToCart={addToCart} />
           </div>
         ))}
+      </div>
+
+      {/* Next button */}
+      <div style={{ marginTop: '30px', textAlign: 'center' }}>
+        <button
+          onClick={() => navigate('/cart')}
+          disabled={!cartItems || cartItems.length === 0}
+          className="btn btn-lg btn-success"
+          style={{
+            padding: '14px 40px',
+            fontSize: '20px',
+            borderRadius: '10px',
+            fontWeight: '600',
+            boxShadow: '0 6px 12px rgba(0,0,0,0.2)',
+            transition: 'transform 0.2s ease-in-out',
+          }}
+          onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+          onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        >
+          ➡️ Next
+        </button>
       </div>
     </div>
   );
