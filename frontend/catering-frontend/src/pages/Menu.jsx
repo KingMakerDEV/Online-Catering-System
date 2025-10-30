@@ -25,6 +25,32 @@ const Menu = () => {
     }
   }, [event]);
 
+  const selectStyle = {
+    background: 'linear-gradient(135deg, #ffffff, #f8f9fa)',
+    border: '2px solid #ff6b6b',
+    borderRadius: '12px',
+    padding: '12px 16px',
+    fontSize: '16px',
+    fontWeight: '500',
+    color: '#333',
+    cursor: 'pointer',
+    boxShadow: '0 4px 12px rgba(255, 107, 107, 0.15)',
+    transition: 'all 0.3s ease',
+    minWidth: '200px',
+    appearance: 'none',
+    backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEgTDYgNiBMMTMgMSIgc3Ryb2tlPSIjZmY2YjZiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K")',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 12px center',
+    backgroundSize: '12px',
+  };
+
+  const selectHoverStyle = {
+    ...selectStyle,
+    borderColor: '#e63946',
+    boxShadow: '0 6px 16px rgba(255, 107, 107, 0.25)',
+    transform: 'translateY(-1px)',
+  };
+
   return (
     <div>
       <h2>Menu</h2>
@@ -37,6 +63,9 @@ const Menu = () => {
           if (val) setSearchParams({ event: val });
           else setSearchParams({});
         }}
+        style={selectStyle}
+        onMouseEnter={(e) => Object.assign(e.target.style, selectHoverStyle)}
+        onMouseLeave={(e) => Object.assign(e.target.style, selectStyle)}
       >
         <option value="">All</option>
         <option value="HOUSE_PARTY">House Party</option>
