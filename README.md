@@ -3,8 +3,9 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Language](https://img.shields.io/badge/language-JavaScript-yellow)
-![GitHub](https://img.shields.io/badge/GitHub-KingMakerDEV/Online-Catering-System-black?logo=github)
-![Build Status](https://img.shields.io/github/actions/workflow/status/KingMakerDEV/Online-Catering-System/ci.yml?branch=main)
+![GitHub](https://img.shields.io/badge/GitHub-KingMakerDEV/Online--Catering--System-black?logo=github)
+![Build Status](https://github.com/KingMakerDEV/Online-Catering-System/actions/workflows/ci.yml/badge.svg?branch=main)
+
 
 ---
 
